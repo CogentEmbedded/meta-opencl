@@ -1,0 +1,37 @@
+caffe: test: Add support for OpenCV package detection
+
+OpenCV 3.0 uses separate opencv_imgcodecs library for image codecs
+which also has to be included in target_link_libraries.
+Let cmake autodetect OpenCV version installed and add
+all the libraries needed as declared in the OpenCV package.
+
+Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+
+diff -pruN a/samples/BasicCaffeSegNet/caffeTest/CMakeLists.txt b/samples/BasicCaffeSegNet/caffeTest/CMakeLists.txt
+--- a/samples/BasicCaffeSegNet/caffeTest/CMakeLists.txt	2017-06-16 20:41:43.752941171 +0300
++++ b/samples/BasicCaffeSegNet/caffeTest/CMakeLists.txt	2017-06-16 20:50:09.630372800 +0300
+@@ -23,4 +23,10 @@ include_directories(
+ 
+ add_executable(BasicCaffeSegNet ${caffe_test_cpp_files} )
+ 
+-target_link_libraries (BasicCaffeSegNet atlasblas BasicCaffeSegNetLib opencv_imgproc opencv_highgui opencv_core glog protobuf boost_thread boost_system pthread)
++find_package(OpenCV REQUIRED)
++include_directories(${OpenCV_INCLUDE_DIRS})
++target_link_libraries(BasicCaffeSegNet ${OpenCV_LIBS})
++
++target_link_libraries (BasicCaffeSegNet atlasblas BasicCaffeSegNetLib glog protobuf boost_thread boost_system pthread)
++
++
+diff -pruN a/samples/OpenCLCaffeSegNet/caffeCLTest/CMakeLists.txt b/samples/OpenCLCaffeSegNet/caffeCLTest/CMakeLists.txt
+--- a/samples/OpenCLCaffeSegNet/caffeCLTest/CMakeLists.txt	2017-06-16 20:41:43.771941413 +0300
++++ b/samples/OpenCLCaffeSegNet/caffeCLTest/CMakeLists.txt	2017-06-16 20:51:31.951419414 +0300
+@@ -24,4 +24,8 @@ include_directories(
+ 
+ add_executable(OpenCLCaffeSegNet ${caffe_test_cpp_files} )
+ 
+-target_link_libraries (OpenCLCaffeSegNet OpenCLCaffeSegNetLib opencv_imgproc opencv_highgui opencv_core glog protobuf  boost_thread boost_system pthread )
++find_package(OpenCV REQUIRED)
++include_directories(${OpenCV_INCLUDE_DIRS})
++target_link_libraries(OpenCLCaffeSegNet ${OpenCV_LIBS})
++
++target_link_libraries (OpenCLCaffeSegNet OpenCLCaffeSegNetLib glog protobuf boost_thread boost_system pthread )

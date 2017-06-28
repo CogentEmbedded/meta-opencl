@@ -1,0 +1,27 @@
+clblas: customcmake: Use new CMP0005 cmake policy
+
+Add minimum required version the same as the original clBLAS cmake,
+and remove escaping since it's done automatically for version 2.6
+and above. Use "cmake --help-policy CMP0005" for details.
+
+This avoids ambiguity when this cmake project is included in another
+cmake project which sets minimum required version 2.6 or above.
+
+Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+
+diff -pruN a/thirdParty/clBLAS/CUSTOMCMAKE/CMakeLists.txt b/thirdParty/clBLAS/CUSTOMCMAKE/CMakeLists.txt
+--- a/thirdParty/clBLAS/CUSTOMCMAKE/CMakeLists.txt	2017-06-19 01:20:13.864071641 +0300
++++ b/thirdParty/clBLAS/CUSTOMCMAKE/CMakeLists.txt	2017-06-19 01:35:57.923038507 +0300
+@@ -1,10 +1,11 @@
++cmake_minimum_required(VERSION 2.8)
+ 
+ project (clBlas CXX C)
+ 
+  add_definitions(-DCLBLAS_HAWAII_DYNAMIC_KERNEL) 
+  add_definitions(-DCLBLAS_BONAIRE_DYNAMIC_KERNEL) 
+  add_definitions(-DCLBLAS_TAHITI_DYNAMIC_KERNEL) 
+- add_definitions(-DOPENCL_VERSION="\\"1.2\\"")
++ add_definitions(-DOPENCL_VERSION="1.2")
+ 	
+  add_definitions(-DBUILDING_CLBLAS)
+  add_definitions(-DCL_USE_DEPRECATED_OPENCL_1_1_APIS) 
