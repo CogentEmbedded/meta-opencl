@@ -1,0 +1,49 @@
+From 992d9a34836cd6fe3541854e41b578f2a37550a9 Mon Sep 17 00:00:00 2001
+From: Valentine Barshak <valentine.barshak@cogentembedded.com>
+Date: Fri, 23 Jun 2017 16:33:10 +0300
+Subject: [PATCH] Add PowerVR Rogue GX6650 to the database
+
+PowerVR Rogue GX6650 GPU uses 3072 32-registers for local memory.
+for local memory. Even if a kernel allocates an array of 8 or
+16-bit values, the data is not packed. Having a 2-dimensional
+array of 128x32 (4096) 32-bit values exceeds the 3072 limit.
+Use smaller sizes for PorverVR GPU instead of default ones.
+
+Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+---
+ src/database/kernels/xgemv_fast_rot.hpp | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/database/kernels/xgemv_fast_rot.hpp b/src/database/kernels/xgemv_fast_rot.hpp
+index 2bd46eb..fa578b9 100644
+--- a/src/database/kernels/xgemv_fast_rot.hpp
++++ b/src/database/kernels/xgemv_fast_rot.hpp
+@@ -29,6 +29,12 @@ const Database::DatabaseEntry XgemvFastRotHalf = {
+         { "default",                                         { {"VW3",8}, {"WGS3",128}, {"WPT3",32} } },
+       }
+     },
++    { // PowerVR GPUs
++      kDeviceTypeGPU, "Imagination Technologies", {
++        { "PowerVR Rogue GX6650",                            { {"VW3",8}, {"WGS3",64}, {"WPT3",16} } },
++        { "default",                                         { {"VW3",8}, {"WGS3",64}, {"WPT3",16} } },
++      }
++    },
+     { // Default
+       kDeviceTypeAll, "default", {
+         { "default",                                         { {"VW3",8}, {"WGS3",128}, {"WPT3",32} } },
+@@ -82,6 +88,12 @@ const Database::DatabaseEntry XgemvFastRotSingle = {
+         { "default",                                         { {"VW3",8}, {"WGS3",32}, {"WPT3",32} } },
+       }
+     },
++    { // PowerVR GPUs
++      kDeviceTypeGPU, "Imagination Technologies", {
++        { "PowerVR Rogue GX6650",                            { {"VW3",8}, {"WGS3",16}, {"WPT3",16} } },
++        { "default",                                         { {"VW3",8}, {"WGS3",16}, {"WPT3",16} } },
++      }
++    },
+     { // Default
+       kDeviceTypeAll, "default", {
+         { "default",                                         { {"VW3",8}, {"WGS3",32}, {"WPT3",32} } },
+-- 
+2.7.5
+

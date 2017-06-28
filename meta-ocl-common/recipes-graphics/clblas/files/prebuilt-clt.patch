@@ -1,0 +1,28 @@
+Add pre-built CL templates support
+
+--- a/library/CMakeLists.txt
++++ b/library/CMakeLists.txt
+@@ -818,6 +818,15 @@ else()
+     set( tplgenBinaryDir "${binary_dir}/${CMAKE_CFG_INTDIR}" )
+ endif()
+ 
++set( PREBUILT_CLT_PATH "" CACHE PATH "Path to brebuilt CLT include directory")
++
++if (IS_DIRECTORY ${PREBUILT_CLT_PATH})
++	file( GLOB CLT_FILES "${PREBUILT_CLT_PATH}/*.clT" )
++	add_custom_target( GENERATE_CLT )
++	foreach( clt_file ${CLT_FILES} )
++		add_custom_command( TARGET GENERATE_CLT PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${clt_file} ${clBLAS_BINARY_DIR}/include)
++	endforeach()
++else()
+ add_custom_target( GENERATE_CLT
+     COMMAND ${tplgenBinaryDir}/tplgen -o ${clBLAS_BINARY_DIR}/include -i ${CMAKE_SOURCE_DIR}/library/blas/gens/clTemplates/ ${SRC_CL_TEMPLATES}
+     COMMAND ${tplgenBinaryDir}/tplgen -o ${clBLAS_BINARY_DIR}/include -i ${bingenBinaryDir}/ ${SRC_CL_TEMPLATES_GEN}
+@@ -827,6 +836,7 @@ add_custom_target( GENERATE_CLT
+ 
+ #add_dependencies( tplgen GEN_CLBIN )
+ add_dependencies( GENERATE_CLT tplgen )
++endif()
+ 
+ if( CMAKE_COMPILER_IS_GNUCC )
+     configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/clBLAS.pc.in
