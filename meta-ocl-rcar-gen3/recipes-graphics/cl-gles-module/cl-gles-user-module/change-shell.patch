@@ -4,5 +4,5 @@
 -#!/bin/bash
 +#!/bin/sh
  ############################################################################ ###
- # File rc.pvr
- # Copyright Copyright (C) 2013-2016 Renesas Electronics Corporation
+ #@Copyright     Copyright (c) Imagination Technologies Ltd. All Rights Reserved
+ #@License       Strictly Confidential.

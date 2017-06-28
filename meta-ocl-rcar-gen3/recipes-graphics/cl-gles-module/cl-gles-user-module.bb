@@ -14,10 +14,9 @@ GLES = "gsx"
 
 SRC_URI_r8a7795 = "file://r8a7795_linux_gsx_binaries_cl_gles3.tar.bz2"
 SRC_URI_append = " \
-    ${@bb.utils.contains("DISTRO_FEATURES", "wayland", " \
-        file://change-shell.patch \
-        file://rc.pvr.service \
-        ", "", d)} \
+    file://change-shell.patch \
+    file://0001-EGL-eglext.h-Include-eglmesaext.h-to-avoid-compile-error.patch \
+    file://rc.pvr.service \
 "
 
 inherit update-rc.d systemd
@@ -30,13 +29,14 @@ do_populate_lic[noexec] = "1"
 do_compile[noexec] = "1"
 
 do_install() {
-    # Copy binary into sysroot
-    install -d ${D}/${exec_prefix}
+    # Install configuration files
     install -d ${D}/${sysconfdir}/init.d
     install -m 644 ${S}/${sysconfdir}/powervr.ini ${D}/${sysconfdir}
     install -m 755 ${S}/${sysconfdir}/init.d/rc.pvr ${D}/${sysconfdir}/init.d/
     install -d ${D}/${sysconfdir}/udev/rules.d
     install -m 644 ${S}/${sysconfdir}/udev/rules.d/72-pvr-seat.rules ${D}/${sysconfdir}/udev/rules.d/
+
+    # Install header files
     install -d ${D}/${includedir}/CL
     install -m 644 ${S}/${includedir}/CL/*.h ${D}/${includedir}/CL/
     install -d ${D}/${includedir}/EGL
@@ -47,32 +47,39 @@ do_install() {
     install -m 644 ${S}/${includedir}/GLES3/*.h ${D}/${includedir}/GLES3/
     install -d ${D}/${includedir}/KHR
     install -m 644 ${S}/${includedir}/KHR/khrplatform.h ${D}/${includedir}/KHR/khrplatform.h
+
+    # Install pre-builded binaries
     install -d ${D}/${libdir}
     install -m 755 ${S}/${libdir}/*.so ${D}/${libdir}/
+    install -d ${D}/${exec_prefix}/local/bin
+    install -m 755 ${S}/${exec_prefix}/local/bin/dlcsrv_REL ${D}/${exec_prefix}/local/bin/dlcsrv_REL
+    install -d ${D}/lib/firmware
+    install -m 644 ${S}/lib/firmware/* ${D}/lib/firmware/
+
+    # Install pkgconfig
     install -d ${D}/${libdir}/pkgconfig
     install -m 644 ${S}/${libdir}/pkgconfig/*.pc ${D}/${libdir}/pkgconfig/
-    install -d ${D}/${exec_prefix}/local/bin
-    install -m 755 ${S}/${exec_prefix}/local/bin/* ${D}/${exec_prefix}/local/bin/
-    install -d ${D}/${exec_prefix}/local/share/pvr/shaders/
-    install -m 644 ${S}/${exec_prefix}/local/share/pvr/shaders/* ${D}/${exec_prefix}/local/share/pvr/shaders/
-    install -d ${D}/lib/firmware
-    install -m 644 ${S}/lib/firmware/rgx.fw ${D}/lib/firmware/
 
     # Create symbolic link
     cd ${D}/${libdir}
+    ln -sf libEGL.so libEGL.so.1
+    ln -sf libGLESv2.so libGLESv2.so.2
     ln -sf libPVROCL.so libOpenCL.so
 
-    if [ "${USE_WAYLAND}" = "1" ]; then
+    if [ "${USE_GLES_WAYLAND}" = "1" ]; then
         # Set the "WindowSystem" parameter for wayland
         if [ "${GLES}" = "gsx" ]; then
-            sed -i -e "/^\s*WindowSystem=/s/\s*\(WindowSystem=\).*/;\1libpvrDRM_WSEGL.so\n\1libpvrWAYLAND_WSEGL.so/" \
+            sed -i -e "s/WindowSystem=libpvrDRM_WSEGL.so/WindowSystem=libpvrWAYLAND_WSEGL.so/g" \
                 ${D}/${sysconfdir}/powervr.ini
         fi
     fi
 
+    # Install systemd service
     if [ ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)} ]; then
-        install -d ${D}/${systemd_unitdir}/system/
-        install -m 644 ${WORKDIR}/rc.pvr.service ${D}/${systemd_unitdir}/system/
+        install -d ${D}/${systemd_system_unitdir}/
+        install -m 644 ${WORKDIR}/rc.pvr.service ${D}/${systemd_system_unitdir}/
+        install -d ${D}/${exec_prefix}/bin
+        install -m 755 ${S}/${sysconfdir}/init.d/rc.pvr ${D}/${exec_prefix}/bin/
     fi
 }
 
@@ -84,8 +91,9 @@ PACKAGES = "\
 FILES_${PN} = " \
     ${sysconfdir}/* \
     ${libdir}/* \
-    /lib/firmware/rgx.fw \
+    /lib/firmware/rgx.fw* \
     /usr/local/bin/* \
+    ${exec_prefix}/bin/* \
     /usr/local/share/* \
 "
 
