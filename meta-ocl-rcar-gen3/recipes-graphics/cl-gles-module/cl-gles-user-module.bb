@@ -15,7 +15,6 @@ GLES = "gsx"
 SRC_URI_r8a7795 = "file://r8a7795_linux_gsx_binaries_cl_gles3.tar.bz2"
 SRC_URI_append = " \
     file://change-shell.patch \
-    file://0001-EGL-eglext.h-Include-eglmesaext.h-to-avoid-compile-error.patch \
     file://rc.pvr.service \
 "
 
