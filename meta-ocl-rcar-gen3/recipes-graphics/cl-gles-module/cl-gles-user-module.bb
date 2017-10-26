@@ -53,6 +53,7 @@ do_install() {
     install -m 755 ${S}/${libdir}/*.so ${D}/${libdir}/
     install -d ${D}/${exec_prefix}/local/bin
     install -m 755 ${S}/${exec_prefix}/local/bin/dlcsrv_REL ${D}/${exec_prefix}/local/bin/dlcsrv_REL
+    install -m 755 ${S}/${exec_prefix}/local/bin/ocl_unit_test ${D}/${exec_prefix}/local/bin/
     install -d ${D}/lib/firmware
     install -m 644 ${S}/lib/firmware/* ${D}/lib/firmware/
 
@@ -92,14 +93,14 @@ FILES_${PN} = " \
     ${sysconfdir}/* \
     ${libdir}/* \
     /lib/firmware/rgx.fw* \
-    /usr/local/bin/* \
+    ${exec_prefix}/local/bin/dlcsrv_REL \
     ${exec_prefix}/bin/* \
-    /usr/local/share/* \
 "
 
 FILES_${PN}-dev = " \
     ${includedir}/* \
     ${libdir}/pkgconfig/* \
+    ${exec_prefix}/local/bin/ocl_unit_test \
 "
 
 PROVIDES += "virtual/libgles2 virtual/egl virtual/opencl opencl-headers"
