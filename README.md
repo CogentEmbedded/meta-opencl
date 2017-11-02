@@ -135,7 +135,11 @@ it might be useful to follow additional configuration steps below.
 
 	IMAGE_INSTALL_append = " caffe-dev clblas-dev clblast-dev viennacl-dev openblas-dev"
 
-6. Build SDK image:
+6. Disable cpio.gz image generation in local.conf to avoid cpio 2GB image size limitation issues:
+
+	IMAGE_FSTYPES_remove = "cpio.gz"
+
+7. Build SDK image:
 
 	bitbake core-image-weston-sdk
 
@@ -150,6 +154,9 @@ The application should perform the unit tests, and print results to the console.
 The last message should indicate the number of passed tests:
 
 	Finished 31 tests in 171.5 seconds: 31 passed, 0 failed (100.00%)
+
+*Note:* OpenCL unit test is included in the cl-gles-module-dev package
+which is added to core-image-weston-sdk by default.
 
 Testing ViennaCL
 ================
