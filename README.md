@@ -47,7 +47,6 @@ Set up Yocto as usual, and use the following steps to enable OpenCL support befo
    and add *PREFERRED_PROVIDER_virtual/opencl* variable equal to "cl-gles-user-module" in local.conf:
 
 	PREFERRED_PROVIDER_virtual/libgles2 = "cl-gles-user-module"
-	PREFERRED_PROVIDER_virtual/egl = "cl-gles-user-module"
 	PREFERRED_PROVIDER_virtual/opencl = "cl-gles-user-module"
 
 5. Enable cl-gles-user-module instead of gles-user-module in local.conf:
