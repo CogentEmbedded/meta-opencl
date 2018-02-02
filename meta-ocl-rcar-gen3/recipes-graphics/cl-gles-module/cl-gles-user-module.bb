@@ -81,6 +81,10 @@ do_install() {
         install -d ${D}/${exec_prefix}/bin
         install -m 755 ${S}/${sysconfdir}/init.d/rc.pvr ${D}/${exec_prefix}/bin/pvrinit
     fi
+
+    if [ ${@bb.utils.contains('DISTRO_FEATURES', 'surroundview', 'true', 'false', d)} ]; then
+        echo "WseglNumBuffers=4" >> ${D}/${sysconfdir}/powervr.ini
+    fi
 }
 
 PACKAGES = "\
