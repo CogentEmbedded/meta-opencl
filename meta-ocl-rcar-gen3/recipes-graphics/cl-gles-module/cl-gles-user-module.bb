@@ -6,13 +6,16 @@ LICENSE = "CLOSED"
 PN = "cl-gles-user-module"
 PR = "r0"
 
-COMPATIBLE_MACHINE = "r8a7795"
+COMPATIBLE_MACHINE = "(r8a7795|r8a7796|r8a77965|r8a77990)"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 S = "${WORKDIR}/rogue"
 GLES = "gsx"
 
-SRC_URI_r8a7795 = "file://r8a7795_linux_gsx_binaries_cl_gles3.tar.bz2"
+SRC_URI_r8a7795 = "file://r8a77951_linux_gsx_binaries_cl_gles.tar.bz2"
+SRC_URI_r8a7796 = "file://r8a77960_linux_gsx_binaries_cl_gles.tar.bz2"
+SRC_URI_r8a77965 = "file://r8a77965_linux_gsx_binaries_cl_gles.tar.bz2"
+SRC_URI_r8a77990 = "file://r8a77990_linux_gsx_binaries_cl_gles.tar.bz2"
 SRC_URI_append = " \
     file://change-shell.patch \
     file://rc.pvr.service \
