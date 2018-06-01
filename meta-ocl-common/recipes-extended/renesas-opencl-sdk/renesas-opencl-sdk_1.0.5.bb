@@ -6,6 +6,7 @@ LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=61fcb6632817d78f66982168f3e5d77e"
 
 DEPENDS += "virtual/opencl opencv protobuf protobuf-native glog boost zlib jpeg libpng"
+RDEPENDS_${PN} += "bash"
 
 PV = "1.0.5"
 S = "${WORKDIR}/git/${P}"
