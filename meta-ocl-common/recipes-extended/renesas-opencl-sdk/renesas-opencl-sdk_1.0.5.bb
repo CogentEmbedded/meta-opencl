@@ -5,7 +5,7 @@ SUMMARY = "Renesas OpenCL SDK"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=61fcb6632817d78f66982168f3e5d77e"
 
-DEPENDS += "virtual/opencl opencv protobuf glog boost zlib jpeg libpng"
+DEPENDS += "virtual/opencl opencv protobuf protobuf-native glog boost zlib jpeg libpng"
 
 PV = "1.0.5"
 S = "${WORKDIR}/git/${P}"
@@ -15,6 +15,7 @@ SRC_URI = "git://adc.luxoft.COm/stash/scm/renocl/renocl_sdk.git;protocol=https;u
 SRC_URI_append = " \
     file://opencv.patch \
     file://clblas.patch \
+    file://caffe.patch \
 "
 
 SRCREV = "313a3314e1289eae20c14257eb72b99b44dfeb5a"
