@@ -32,6 +32,8 @@ do_compile[noexec] = "1"
 
 do_install() {
     # Install configuration files
+    install -d ${D}/${sysconfdir}/OpenCL/vendors
+    install -m 644 ${S}/${sysconfdir}/OpenCL/vendors/* ${D}/${sysconfdir}/OpenCL/vendors/
     install -d ${D}/${sysconfdir}/init.d
     install -m 644 ${S}/${sysconfdir}/powervr.ini ${D}/${sysconfdir}
     install -m 755 ${S}/${sysconfdir}/init.d/rc.pvr ${D}/${sysconfdir}/init.d/
