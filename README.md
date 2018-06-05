@@ -3,9 +3,9 @@ OpenCL support
 
 The *meta-opencl* layers provide the following packages:
 
- * meta-ocl-rcar-gen3 layer:
-   * cl-gles-user-module - OpenCL/OpenGL user module for Renesas R-Car R8A7795 SoC boards
- * meta-ocl-common layer:
+* meta-ocl-rcar-gen3 layer:
+   * cl-gles-user-module - OpenCL/OpenGL user module for Renesas R-Car Gen3 boards
+* meta-ocl-common layer:
    * libgfortran - GNU Fortran library (fixes)
    * opencv - Open Computer Vision library (fixes)
    * gflags - command line flags processing library
@@ -21,37 +21,41 @@ The *meta-opencl* layers provide the following packages:
 
 *Notes:*
 
- * OpenCL is currently supported on Renesas R-Car R8A7795 SoC boards.
- * Luxoft renesas-opencl-sdk provides separate set of Caffe and clBlas
-   libraries, and does not depend on caffe or clblas packages.
+* OpenCL is currently supported on Renesas R-Car H3, M3 SoC boards.
+* Luxoft renesas-opencl-sdk provides separate set of Caffe and clBlas
+  libraries, and does not depend on caffe or clblas packages.
 
 Enabling OpenCL support in Yocto for R-Car Gen3 boards
 ======================================================
 
 Set up Yocto as usual, and use the following steps to enable OpenCL support before starting the build.
 
-1. Copy OpenCL/OpenGL binaries to the meta-opencl/meta-ocl-rcar-gen3 layer:
+1. Copy OpenCL/OpenGL binaries to the meta-opencl/meta-ocl-rcar-gen3 layer.
+   Strip the *EVA_* prefix while copying when using evaluation version:
 
-	cp r8a7795_linux_gsx_binaries_cl_gles3.tar.bz2 meta-opencl/meta-ocl-rcar-gen3/recipes-graphics/cl-gles-module/cl-gles-user-module/
+	   DEST=meta-opencl/meta-ocl-rcar-gen3/recipes-graphics/cl-gles-module/cl-gles-user-module
+	   for f in *_linux_gsx_binaries_cl_gles.tar.bz2; do
+	     cp ${f} ${DEST}/${f#EVA_} && echo "Copied: ${f}"
+	   done
 
 2. Add meta-python layer to *BBLAYERS* in bblayers.conf file:
 
-	${TOPDIR}/../meta-openembedded/meta-python \
+	   ${TOPDIR}/../meta-openembedded/meta-python \
 
 3. Add meta-opencl layers to *BBLAYERS* in bblayers.conf file:
 
-	${TOPDIR}/../meta-opencl/meta-ocl-common \
-	${TOPDIR}/../meta-opencl/meta-ocl-rcar-gen3 \
+	   ${TOPDIR}/../meta-opencl/meta-ocl-common \
+	   ${TOPDIR}/../meta-opencl/meta-ocl-rcar-gen3 \
 
 4. Replace all occurrences of gles-user-module with cl-gles-user-module,
    and add *PREFERRED_PROVIDER_virtual/opencl* variable equal to "cl-gles-user-module" in local.conf:
 
-	PREFERRED_PROVIDER_virtual/libgles2 = "cl-gles-user-module"
-	PREFERRED_PROVIDER_virtual/opencl = "cl-gles-user-module"
+	   PREFERRED_PROVIDER_virtual/libgles2 = "cl-gles-user-module"
+	   PREFERRED_PROVIDER_virtual/opencl = "cl-gles-user-module"
 
 5. Enable cl-gles-user-module instead of gles-user-module in local.conf:
 
-	PREFERRED_PROVIDER_gles-user-module = "cl-gles-user-module"
+	   PREFERRED_PROVIDER_gles-user-module = "cl-gles-user-module"
 
 Sample configuration files are available at *meta-opencl/meta-ocl-rcar-gen3/docs/sample/conf*.
 
@@ -115,7 +119,7 @@ it might be useful to follow additional configuration steps below.
 1. Enable Fortran support in local.conf:
 
 	FORTRAN_forcevariable = ",fortran"
-	RUNTIMETARGET_append_pn-gcc-runtime = " libquadmath libgfortran"
+	RUNTIMETARGET_append_pn-gcc-runtime = " libquadmath"
 	IMAGE_INSTALL_append = " gfortran gfortran-symlinks libgfortran libgfortran-dev"
 
 2. Enable cmake in local.conf:
@@ -134,9 +138,9 @@ it might be useful to follow additional configuration steps below.
 
 	IMAGE_INSTALL_append = " caffe-dev clblas-dev clblast-dev viennacl-dev openblas-dev"
 
-6. Disable cpio.gz image generation in local.conf to avoid cpio 2GB image size limitation issues:
+6. Remove Linux kernel sources and LTP to make SDK image smaller if necessary:
 
-	IMAGE_FSTYPES_remove = "cpio.gz"
+	IMAGE_INSTALL_remove = "kernel-devsrc ltp"
 
 7. Build SDK image:
 
