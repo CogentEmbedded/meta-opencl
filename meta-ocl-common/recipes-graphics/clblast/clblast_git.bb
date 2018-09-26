@@ -10,6 +10,7 @@ SRC_URI = " \
     git://github.com/CNugteren/CLBlast.git \
     file://0001-Add-PowerVR-Rogue-GX6650-to-the-database.patch \
     file://0002-Add-library-versioning-support.patch \
+    file://0003-utilities-Enable-FP16-support-for-PowerVR-Rogue-GX66.patch \
 "
 
 SRCREV = "48f2682eb7ee72b0f9e6f2922569fcf352f8ce5f"

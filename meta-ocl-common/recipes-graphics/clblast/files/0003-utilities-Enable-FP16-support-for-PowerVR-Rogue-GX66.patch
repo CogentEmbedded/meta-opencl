@@ -1,0 +1,32 @@
+From d771610f2ff94c19e620f898c902bdb51daa0a79 Mon Sep 17 00:00:00 2001
+From: Valentine Barshak <valentine.barshak@cogentembedded.com>
+Date: Wed, 26 Sep 2018 21:33:35 +0300
+Subject: [PATCH] utilities: Enable FP16 support for PowerVR Rogue GX6650 GPU
+
+PowerVR Rogue GX6650 OpenCL doesn't export cl_khr_fp16 extension,
+though it does support FP16. Enable FP16 support for Rogue GX6650
+GPUs explicitly instead of checking the extension string.
+
+Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+---
+ src/utilities/utilities.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/utilities/utilities.cpp b/src/utilities/utilities.cpp
+index 95b70cd..3fcab78 100644
+--- a/src/utilities/utilities.cpp
++++ b/src/utilities/utilities.cpp
+@@ -494,7 +494,9 @@ template <> bool PrecisionSupported<double2>(const Device &device) {
+ }
+ template <> bool PrecisionSupported<half>(const Device &device) {
+   auto extensions = device.Capabilities();
+-  if (device.Name() == "Mali-T628") { return true; } // supports fp16 but not cl_khr_fp16 officially
++  // support fp16 but not cl_khr_fp16 officially
++  if (device.Name() == "PowerVR Rogue GX6650") { return true; }
++  if (device.Name() == "Mali-T628") { return true; }
+   return (extensions.find(kKhronosHalfPrecision) == std::string::npos) ? false : true;
+ }
+ 
+-- 
+2.7.4
+
